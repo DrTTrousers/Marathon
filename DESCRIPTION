@@ -1,0 +1,11 @@
+Package: Marathon
+Type: Package
+Title: A package to pump concepts and cohorts into ATLAS as sets quickly
+Version: 0.0.1
+Author: Jack Brewster
+Maintainer: Jack Brewster <jack.brewster@iqvia.com>
+Description: This package leverages existing code to construct a series of light functions that can read in libraries and output concept sets, or be modified to create cohorts in ATLAS
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
