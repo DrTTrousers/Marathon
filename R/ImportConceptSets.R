@@ -1,11 +1,11 @@
 
 ### CDM Database connection details
 connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "snowflake",
-                                                                connectionString = paste0(Sys.getenv("PA_DA_GERMANY_SERVER"),Sys.getenv("CI_WARE")),
+                                                                connectionString = "somestring",
                                                                 pathToDriver = "~/drivers",
-                                                                user = Sys.getenv("SNOWFLAKE_USER"),
-                                                                password = Sys.getenv("SNOWFLAKE_PASSWORD"))
-cdmSchema <- Sys.getenv("PA_DA_GERMANY_SCHEMA")
+                                                                user = Sys.getenv("USER"),
+                                                                password = Sys.getenv("PASSWORD"))
+cdmSchema <- Sys.getenv("someschema")
 
 #' Sheet read - a helper function to ingest codes saved as excel workbooks and prepare them for mapping
 #'
@@ -47,7 +47,8 @@ translate <- function(path = "SomeInputofCodes",
                       cleaning = TRUE,
                       relationships = "Maps to",
                       output = "xlsx",
-                      label = NULL
+                      label = NULL,
+                      connection = connectionDetails
                       ){
   if(!file.exists(path)){
     stop("The provided input file does not exist, have you pointed to the correct path?")
@@ -121,6 +122,24 @@ translate <- function(path = "SomeInputofCodes",
   }
   if(output == "conceptSet" | output == "conceptset" | output == "concepts" | output == "set"){
     Marathon::conceptPump(mapping)
+    
+    connection <- DatabaseConnector::connect(connection)
+    
+    lapply(VSAC_strings,                              # The strings of value names
+           Marathon::conceptPump,                               # The conceptPump() function
+           mappedValues = mapping,                     # Further arguments for conceptPump() function 
+           project = label,                        # 
+           conn = connection,                         # 
+           schema = cdmSchema,                        #
+           mapToStandard = FALSE,                     #
+           Descendants = TRUE,                       #
+           Exclude = FALSE,                           #
+           Atlas = baseUrl,                           #
+           authMethod = "db",                         #
+           Username = AtlasUser,                      #
+           Password = AtlasPass)                      #
+    
+    DatabaseConnector::dbDisconnect(connection)
   }
 }
 
