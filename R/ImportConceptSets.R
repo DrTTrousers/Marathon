@@ -1,11 +1,7 @@
 
 ### CDM Database connection details
-connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "snowflake",
-                                                                connectionString = "somestring",
-                                                                pathToDriver = "~/drivers",
-                                                                user = Sys.getenv("USER"),
-                                                                password = Sys.getenv("PASSWORD"))
-cdmSchema <- Sys.getenv("someschema")
+connectionDetails <- DatabaseConnector::connect(Eunomia::getEunomiaConnectionDetails())
+cdmSchema <- "main"
 
 #' Sheet read - a helper function to ingest codes saved as excel workbooks and prepare them for mapping
 #'
